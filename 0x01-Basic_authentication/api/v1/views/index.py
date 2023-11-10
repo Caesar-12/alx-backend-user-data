@@ -30,4 +30,3 @@ def stats() -> str:
 def unauthorized() -> str:
     """Raises 401 error"""
     abort(401)
-    
