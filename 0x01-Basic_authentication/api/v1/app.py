@@ -28,7 +28,7 @@ def client_error(error) -> str:
 
 
 @app.errorhandler(403)
-def client_error(error) -> str:
+def forbidden_error(error) -> str:
     """Forbidden"""
     return jsonify({"error": "Forbidden"}), 403
 
