@@ -22,7 +22,7 @@ def not_found(error) -> str:
 
 
 @app.errorhandler(401)
-def client_error(error):
+def client_error(error) -> str:
     """Client error"""
     return jsonify({"error": "Unauthorized"}), 401
 
