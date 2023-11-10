@@ -15,6 +15,8 @@ class Auth:
         n_excluded_paths = [p.rstrip('/') for p in excluded_paths]
         if n_path in n_excluded_paths:
             return False
+        else:
+            return True
 
     def authorization_header(self, request=None) -> str:
         """Creates authorization header"""
