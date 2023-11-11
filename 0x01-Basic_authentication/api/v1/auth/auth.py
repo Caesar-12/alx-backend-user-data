@@ -20,8 +20,13 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """Creates authorization header"""
-        return None
+        if not request:
+            return None
+        elif 'Authorization' not in request.headers:
+            return None
+        elif 'Authorization' in request.headers:
+            return request.headers.get('Authorization')
 
     def current_user(self, request=None) -> TypeVar('User'):
         """Creates a user"""
-        return None
+        return request
