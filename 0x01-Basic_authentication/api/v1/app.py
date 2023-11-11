@@ -36,12 +36,14 @@ def forbidden_error(error) -> str:
     """Forbidden"""
     return jsonify({"error": "Forbidden"}), 403
 
+
 @app.before_request
 def before_request():
     """Handles authentication"""
     if not auth:
         return
-    excluded_list = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    excluded_list = ['/api/v1/status/', '/api/v1/unauthorized/',
+                     '/api/v1/forbidden/']
     authenticate = auth.require_auth(request.path, excluded_list)
     if authenticate is False:
         return
