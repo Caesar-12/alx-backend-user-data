@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Contains a child class"""
 from api.v1.auth.auth import Auth
-from base64 import b64decode, binascii
+import base64
 
 
 class BasicAuth(Auth):
@@ -23,7 +23,6 @@ class BasicAuth(Auth):
         else:
             return None
 
-
     def decode_base64_authorization_header(
             self, base64_authorization_header: str) -> str:
         """returns the decoded value of a
@@ -36,8 +35,8 @@ class BasicAuth(Auth):
             return None
 
         try:
-            decoded = b64decode(auth_h)
-            return decoded
-        except binascii.Error:
+            decoded = base64.b64decode(auth_h)
+            decoded_utf8 = decoded.decode('utf-8')
+            return decoded_utf8
+        except (base64.binascii.Error, UnicodeDecodeError):
             return None
-
