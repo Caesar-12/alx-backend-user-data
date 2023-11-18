@@ -3,7 +3,7 @@
 import bcrypt
 
 
-def _hash_password(passwd):
+def _hash_password(passwd: str) -> bytes:
     """converts passwords to bytes"""
     passwd_bytes = passwd.encode('utf-8')
     salt = bcrypt.gensalt()
