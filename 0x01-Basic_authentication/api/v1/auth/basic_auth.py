@@ -2,6 +2,7 @@
 """Contains a child class"""
 from api.v1.auth.auth import Auth
 import base64
+from typing import TypeVar
 
 
 class BasicAuth(Auth):
@@ -56,3 +57,14 @@ class BasicAuth(Auth):
 
         details = auth_h.split(':')
         return (details[0], details[1])
+
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> TypeVar('User'):
+        """
+        returns the User instance based on his email and password
+        """
+        if not isinstance(user_email, str) or not user_email:
+            return None
+        elif not isinstance(user_pwd, str) or not user_pwd:
+            return None
+        
