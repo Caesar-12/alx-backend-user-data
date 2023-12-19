@@ -56,7 +56,7 @@ class BasicAuth(Auth):
         elif ":" not in auth_h:
             return (None, None)
 
-        details = auth_h.split(':')
+        details = auth_h.split(':', 1)
         return (details[0], details[1])
 
     def user_object_from_credentials(
