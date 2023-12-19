@@ -3,6 +3,7 @@
 from api.v1.auth.auth import Auth
 import base64
 from typing import TypeVar
+from models.user import User
 
 
 class BasicAuth(Auth):
@@ -68,3 +69,27 @@ class BasicAuth(Auth):
         elif not isinstance(user_pwd, str) or not user_pwd:
             return None
         
+    def user_object_from_credentials(self, user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """Returnbs user object from credentials provided"""
+        if not (user_email and isinstance(user_email, str) and
+                user_pwd and isinstance(user_pwd, str)):
+            return None
+        try:
+            users = User.search({'email': user_email})
+        except Exception:
+            return None
+        for user in users:
+            if user.is_valid_password(user_pwd):
+                return user
+        return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """
+        overloads Auth and retrieves the User instance for a request:
+        """
+        header = self.authorization_header(request)
+        b64header = self.extract_base64_authorization_header(header)
+        decoded = self.decode_base64_authorization_header(b64header)
+        usercreds = self.extract_user_credentials(decoded)
+        return self.user_object_from_credentials(*usercreds)
