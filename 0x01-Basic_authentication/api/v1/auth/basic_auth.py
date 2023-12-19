@@ -48,16 +48,11 @@ class BasicAuth(Auth):
         """
         returns the user email and password from the Base64 decoded value
         """
-        auth_h = decoded_base64_authorization_header
-        if not auth_h:
-            return (None, None)
-        elif not isinstance(auth_h, str):
-            return (None, None)
-        elif ":" not in auth_h:
-            return (None, None)
-
-        details = auth_h.split(':', 1)
-        return (details[0], details[1])
+        decd64 = decoded_base64_authorization_header
+        if (decd64 and isinstance(decd64, str) and ":" in decd64):
+            product = decd64.split(":", 1)
+            return (product[0], product[1])
+        return (None, None)
 
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
