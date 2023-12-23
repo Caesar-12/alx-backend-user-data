@@ -1,48 +1,71 @@
 #!/usr/bin/env python3
 """
-Session Auth python file
+Definition of class SessionAuth
 """
+import base64
+from uuid import uuid4
+from typing import TypeVar
 
 from .auth import Auth
-from uuid import uuid4
+from models.user import User
 
 
 class SessionAuth(Auth):
-    """
-    a class SessionAuth inherits from Auth
+    """ Implement Session Authorization protocol methods
     """
     user_id_by_session_id = {}
 
     def create_session(self, user_id: str = None) -> str:
         """
-        instance method def create_session(self, user_id: str = None) -> str:
-        that creates a Session ID for a user_id
-        Return None if user_id is None
-        Return None if user_id is not a string
-        Otherwise:
-        Generate a Session ID using uuid module and uuid4() like id in Base
-        Use this Session ID as key of the dictionary user_id_by_session_id
-        - the value for this key must be user_id
-        Return the Session ID
-        The same user_id can have multiple Session ID - indeed,
-        the user_id is the value in the dictionary user_id_by_session_id
+        Creates a Session ID for a user with id user_id
+        Args:
+            user_id (str): user's user id
+        Return:
+            None is user_id is None or not a string
+            Session ID in string format
         """
         if user_id is None or not isinstance(user_id, str):
             return None
-
-        session_id = str(uuid4())
-        self.user_id_by_session_id[session_id] = user_id
-        return session_id
+        id = uuid4()
+        self.user_id_by_session_id[str(id)] = user_id
+        return str(id)
 
     def user_id_for_session_id(self, session_id: str = None) -> str:
         """
-        an instance method that returns a User ID based on a Session ID
-        Return None if session_id is None
-        Return the value (the User ID) for the key session_id in the dictionary
-        user_id_by_session_id.
-        use .get() built-in for accessing in a dictionary a value based on key
+        Returns a user ID based on a session ID
+        Args:
+            session_id (str): session ID
+        Return:
+            user id or None if session_id is None or not a string
         """
         if session_id is None or not isinstance(session_id, str):
             return None
-
         return self.user_id_by_session_id.get(session_id)
+
+    def current_user(self, request=None):
+        """
+        Return a user instance based on a cookie value
+        Args:
+            request : request object containing cookie
+        Return:
+            User instance
+        """
+        session_cookie = self.session_cookie(request)
+        user_id = self.user_id_for_session_id(session_cookie)
+        user = User.get(user_id)
+        return user
+
+    def destroy_session(self, request=None):
+        """
+        Deletes a user session
+        """
+        if request is None:
+            return False
+        session_cookie = self.session_cookie(request)
+        if session_cookie is None:
+            return False
+        user_id = self.user_id_for_session_id(session_cookie)
+        if user_id is None:
+            return False
+        del self.user_id_by_session_id[session_cookie]
+        return True
